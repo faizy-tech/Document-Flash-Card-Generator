@@ -1,0 +1,469 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --dusk-bg: #181a20;
+    --dusk-panel: #23242b;
+    --dusk-glass: rgba(36, 38, 46, 0.85);
+    --dusk-glass-blur: 18px;
+    --dusk-accent: #00ffe7; /* Teal */
+    --dusk-accent2: #7f5cff; /* Purple */
+    --dusk-text: #e6e6f0;
+    --dusk-muted: #7a7a8c;
+    --dusk-border: rgba(127, 92, 255, 0.25); /* Slightly more visible border */
+    --dusk-shadow: 0 8px 32px 0 rgba(0,0,0,0.55); /* Deeper shadow */
+    --animation-speed-fast: 0.3s;
+    --animation-speed-medium: 0.7s;
+    --animation-speed-slow: 1.2s;
+    --easing-curve: cubic-bezier(.77,0,.18,1);
+}
+
+@keyframes backgroundPan {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes subtleGlow {
+    0%, 100% { text-shadow: 0 0 8px var(--dusk-accent2), 0 0 16px rgba(127, 92, 255, 0.5); }
+    50% { text-shadow: 0 0 12px var(--dusk-accent2), 0 0 24px rgba(127, 92, 255, 0.7); }
+}
+
+@keyframes pulseBorder {
+     0% { border-color: var(--dusk-border); box-shadow: var(--dusk-shadow); }
+     50% { border-color: var(--dusk-accent2); box-shadow: 0 8px 40px 0 rgba(127, 92, 255, 0.4); }
+     100% { border-color: var(--dusk-border); box-shadow: var(--dusk-shadow); }
+}
+
+
+body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    /* Animated Gradient Background */
+    background: linear-gradient(120deg, var(--dusk-bg) 0%, var(--dusk-panel) 50%, var(--dusk-bg) 100%);
+    background-size: 200% 200%; /* Increase size for panning */
+    animation: backgroundPan 15s ease infinite; /* Slow pan animation */
+    color: var(--dusk-text);
+    display: flex;
+    min-height: 100vh;
+    overflow: hidden;
+    letter-spacing: 0.01em;
+}
+
+/* Glassmorphism Effect */
+.glassmorphism {
+    background: var(--dusk-glass);
+    backdrop-filter: blur(var(--dusk-glass-blur));
+    -webkit-backdrop-filter: blur(var(--dusk-glass-blur));
+    border-radius: 18px;
+    border: 1.5px solid var(--dusk-border);
+    box-shadow: var(--dusk-shadow);
+    padding: 24px;
+    transition: box-shadow var(--animation-speed-fast) ease, border var(--animation-speed-fast) ease, transform var(--animation-speed-fast) ease;
+}
+.glassmorphism:hover {
+    /* Subtle lift on hover for elements using glassmorphism directly */
+    /* transform: translateY(-3px); */
+    box-shadow: 0 12px 40px 0 rgba(0,0,0,0.65);
+}
+
+
+/* Layout */
+.sidebar {
+    width: 270px;
+    background: var(--dusk-panel);
+    padding: 28px 18px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    border-right: 1.5px solid var(--dusk-border);
+    box-shadow: 4px 0 28px 0 rgba(0,0,0,0.25);
+    z-index: 2;
+    position: relative;
+    animation: slideInLeft var(--animation-speed-medium) var(--easing-curve) 1;
+    transition: box-shadow var(--animation-speed-fast) ease;
+}
+.sidebar:hover {
+     box-shadow: 6px 0 35px 0 rgba(0,0,0,0.35);
+}
+
+.sidebar h2 {
+    margin-bottom: 24px;
+    text-align: center;
+    color: var(--dusk-accent);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-size: 1.2rem;
+    text-shadow: 0 0 8px var(--dusk-accent);
+    animation: fadeIn var(--animation-speed-slow) ease 1;
+}
+
+#history-list {
+    list-style: none;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 18px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dusk-accent2) var(--dusk-panel);
+}
+#history-list::-webkit-scrollbar {
+    width: 6px;
+}
+#history-list::-webkit-scrollbar-thumb {
+    background: var(--dusk-accent2);
+    border-radius: 4px;
+}
+
+#history-list li {
+    padding: 9px 14px; /* Slightly larger padding */
+    margin-bottom: 8px; /* Slightly more spacing */
+    border-radius: 8px; /* Smoother radius */
+    border: 1px solid transparent;
+    transition: background-color var(--animation-speed-fast) ease,
+                border-color var(--animation-speed-fast) ease,
+                transform var(--animation-speed-fast) ease,
+                box-shadow var(--animation-speed-fast) ease;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    position: relative; /* For potential pseudo-elements */
+}
+
+#history-list li:hover {
+    background-color: rgba(127, 92, 255, 0.15); /* Slightly stronger hover */
+    border-color: var(--dusk-accent2);
+    transform: translateX(5px) scale(1.02); /* Add subtle scale */
+    box-shadow: 0 2px 8px rgba(127, 92, 255, 0.2);
+}
+
+#history-list li.active {
+    background: linear-gradient(90deg, var(--dusk-accent2) 0%, var(--dusk-accent) 100%);
+    color: var(--dusk-panel);
+    font-weight: 600;
+    border-color: transparent; /* Remove border when active */
+    box-shadow: 0 4px 15px rgba(127, 92, 255, 0.4);
+    transform: translateX(5px) scale(1.03); /* Slightly more pronounced active state */
+}
+
+.settings-button {
+    margin-top: auto;
+    padding: 12px 0;
+    background: linear-gradient(90deg, var(--dusk-accent2) 0%, var(--dusk-accent) 100%);
+    background-size: 200% 100%; /* For hover animation */
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 18px 0 rgba(0,0,0,0.25);
+    transition: background-position var(--animation-speed-fast) ease,
+                transform var(--animation-speed-fast) ease,
+                box-shadow var(--animation-speed-fast) ease;
+}
+.settings-button:hover {
+    background-position: right center; /* Animate gradient */
+    transform: translateY(-2px) scale(1.03); /* Lift effect */
+    box-shadow: 0 6px 25px 0 rgba(0, 255, 231, 0.3); /* Accent glow */
+}
+.settings-button:active {
+    transform: scale(0.98);
+    transition-duration: 0.1s;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 48px 20px 20px 20px; /* Add side padding */
+    overflow-y: auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dusk-accent2) var(--dusk-panel);
+}
+.main-content::-webkit-scrollbar {
+    width: 8px;
+}
+.main-content::-webkit-scrollbar-thumb {
+    background: var(--dusk-accent2);
+    border-radius: 4px;
+}
+
+.main-content h1 {
+    margin-bottom: 36px;
+    text-align: center;
+    font-size: 2.4rem; /* Slightly larger */
+    font-weight: 800;
+    color: var(--dusk-text); /* Base text color */
+    letter-spacing: 0.12em;
+    /* Use animation for the glow */
+    animation: fadeIn var(--animation-speed-slow) var(--easing-curve) 1,
+               subtleGlow 4s ease-in-out infinite; /* Add subtle glow animation */
+}
+
+.input-section {
+    margin-bottom: 36px;
+    text-align: center;
+    width: 90%;
+    max-width: 650px;
+    /* Apply glassmorphism */
+    background: var(--dusk-glass);
+    backdrop-filter: blur(var(--dusk-glass-blur));
+    -webkit-backdrop-filter: blur(var(--dusk-glass-blur));
+    border-radius: 18px;
+    border: 1.5px solid var(--dusk-border);
+    box-shadow: var(--dusk-shadow);
+    padding: 28px; /* Increased padding */
+    animation: fadeIn var(--animation-speed-slow) var(--easing-curve) 1,
+               pulseBorder 6s ease-in-out infinite alternate; /* Add pulsing border */
+    transition: box-shadow var(--animation-speed-fast) ease, border var(--animation-speed-fast) ease;
+}
+.input-section:hover {
+     border-color: var(--dusk-accent); /* Change border color on hover */
+     box-shadow: 0 10px 40px 0 rgba(0, 255, 231, 0.2); /* Accent glow on hover */
+}
+
+
+.input-section input[type="file"] {
+    display: block;
+    margin: 18px auto 12px auto;
+    color: var(--dusk-text);
+    background: var(--dusk-panel);
+    border-radius: 8px;
+    border: 1.5px solid var(--dusk-border); /* Match border style */
+    padding: 10px 14px; /* More padding */
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color var(--animation-speed-fast) ease, box-shadow var(--animation-speed-fast) ease;
+}
+.input-section input[type="file"]:hover {
+    border-color: var(--dusk-accent);
+}
+
+/* Basic button styling */
+button {
+    padding: 12px 24px; /* More horizontal padding */
+    background: linear-gradient(90deg, var(--dusk-accent2) 0%, var(--dusk-accent) 100%);
+    background-size: 200% 100%; /* For hover animation */
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 8px 6px;
+    box-shadow: 0 4px 18px 0 rgba(0,0,0,0.25);
+    transition: background-position var(--animation-speed-fast) ease,
+                transform var(--animation-speed-fast) ease,
+                box-shadow var(--animation-speed-fast) ease;
+}
+button:hover:not(:disabled) {
+    background-position: right center; /* Animate gradient */
+    transform: translateY(-2px) scale(1.03); /* Lift effect */
+    box-shadow: 0 6px 25px 0 rgba(0, 255, 231, 0.3); /* Accent glow */
+}
+button:active:not(:disabled) {
+    transform: scale(0.98);
+    transition-duration: 0.1s;
+}
+button:disabled {
+    background: var(--dusk-muted);
+    cursor: not-allowed;
+    color: #aaa;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Flashcard Styles */
+.flashcard-container {
+    width: 90%;
+    max-width: 540px;
+    text-align: center;
+    margin-top: 18px;
+    animation: fadeIn var(--animation-speed-slow) var(--easing-curve) 1;
+}
+
+.flashcard {
+    min-height: 270px;
+    perspective: 1500px; /* Increased perspective */
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin-bottom: 24px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s var(--easing-curve);
+}
+.flashcard:hover .flashcard-inner:not(.is-flipped) { /* Only lift when not flipped */
+     transform: translateY(-8px) rotateX(5deg); /* Add subtle tilt on hover */
+     box-shadow: 0 15px 45px 0 rgba(0,0,0,0.6);
+}
+
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 270px;
+    text-align: center;
+    transition: transform var(--animation-speed-medium) var(--easing-curve), box-shadow var(--animation-speed-medium) ease; /* Smooth transition */
+    transform-style: preserve-3d;
+    border-radius: 18px;
+    box-shadow: var(--dusk-shadow);
+}
+.flashcard.is-flipped .flashcard-inner {
+    transform: rotateY(180deg);
+    box-shadow: var(--dusk-shadow); /* Maintain shadow when flipped */
+}
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    border-radius: 18px;
+    font-size: 1.3rem; /* Slightly larger text */
+    font-weight: 600;
+    color: var(--dusk-text);
+    background: var(--dusk-glass); /* Base glass background */
+    border: 1.5px solid var(--dusk-border);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.3); /* Inner shadow for depth */
+    letter-spacing: 0.04em;
+    transition: background var(--animation-speed-fast) ease, border-color var(--animation-speed-fast) ease;
+    overflow: hidden; /* Ensure content doesn't overflow */
+    line-height: 1.5; /* Improve readability */
+}
+.flashcard-front {
+     background: linear-gradient(135deg, var(--dusk-glass) 70%, rgba(127, 92, 255, 0.3)); /* Purple accent gradient */
+     border-color: rgba(127, 92, 255, 0.4);
+}
+.flashcard-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, var(--dusk-glass) 70%, rgba(0, 255, 231, 0.3)); /* Teal accent gradient */
+    border-color: rgba(0, 255, 231, 0.4);
+    color: var(--dusk-text);
+}
+
+.flashcard-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    gap: 12px;
+    animation: fadeIn 1.5s ease 0.5s 1 backwards; /* Delayed fade in */
+}
+#card-counter {
+    font-weight: bold;
+    color: var(--dusk-accent);
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px var(--dusk-accent);
+}
+
+/* Settings Popover */
+@keyframes popoverEnter {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.popover {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* transform: translate(-50%, -50%); */ /* Handled by animation */
+    width: 92%;
+    max-width: 420px;
+    z-index: 1000;
+    padding: 36px 32px 28px 32px;
+    border-radius: 18px;
+    border: 1.5px solid var(--dusk-accent2);
+    box-shadow: 0 12px 50px 0 rgba(0,0,0,0.6); /* Stronger shadow for popover */
+    background: var(--dusk-glass);
+    backdrop-filter: blur(22px); /* More blur for popover */
+    -webkit-backdrop-filter: blur(22px);
+    animation: popoverEnter 0.4s var(--easing-curve) 1 forwards;
+}
+.popover h2 {
+    margin-bottom: 24px; /* More space */
+    text-align: center;
+    color: var(--dusk-accent2);
+    font-weight: 700;
+    text-shadow: 0 0 10px var(--dusk-accent2);
+}
+.popover label {
+    display: block;
+    margin-bottom: 8px; /* More space */
+    color: var(--dusk-accent);
+    font-weight: 600; /* Bolder label */
+    font-size: 0.95rem;
+}
+.popover input[type="password"] {
+    width: 100%;
+    padding: 14px; /* More padding */
+    margin-bottom: 22px; /* More space */
+    border-radius: 10px; /* Match button radius */
+    border: 1.5px solid var(--dusk-accent2);
+    background: var(--dusk-panel);
+    color: var(--dusk-text);
+    font-size: 1rem;
+    transition: border-color var(--animation-speed-fast) ease, box-shadow var(--animation-speed-fast) ease;
+}
+.popover button {
+    margin-right: 10px;
+    margin-top: 10px; /* Add top margin for spacing */
+}
+
+/* Simple Animations (More can be added) */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes slideInLeft {
+    from { transform: translateX(-100px); opacity: 0; } /* Start further left */
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Futuristic glowing accent border for focus */
+input:focus, button:focus, select:focus, textarea:focus { /* Apply to more elements */
+    outline: none; /* Remove default outline */
+    border-color: var(--dusk-accent) !important; /* Force border color */
+    box-shadow: 0 0 0 3px rgba(0, 255, 231, 0.3), /* Outer glow */
+                0 0 10px rgba(0, 255, 231, 0.2), /* Inner subtle glow */
+                inset 0 0 5px rgba(0, 255, 231, 0.1); /* Inset glow */
+}
+/* Specific focus for password input in popover */
+.popover input[type="password"]:focus {
+     border-color: var(--dusk-accent) !important;
+     box-shadow: 0 0 0 3px rgba(0, 255, 231, 0.3),
+                 0 0 10px rgba(0, 255, 231, 0.2),
+                 inset 0 0 5px rgba(0, 255, 231, 0.1);
+}
+
+/* Add a subtle loading/processing indicator possibility */
+.is-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: var(--dusk-accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
